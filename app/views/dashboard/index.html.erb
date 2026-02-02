@@ -1,0 +1,132 @@
+<div class="container mt-4 mb-5"> <%# mb-5 agrega el espacio al final de la página %>
+  
+  <%# Título Principal %>
+  <h2 class="mb-4 text-dark fw-bold"><i class="bi bi-speedometer2 me-2"></i>Dashboard de Soporte</h2>
+
+  <%# Primera Fila: Estado y Prioridad %>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white fw-bold py-3"><i class="bi bi-pie-chart me-2 text-primary"></i>Tickets por Estado</div>
+        <div class="card-body text-center">
+          <% if @tickets_por_estado.any? %>
+            <%= pie_chart @tickets_por_estado, colors: ["#0d6efd", "#ffc107", "#198754"], legend: "bottom", adapter: "google" %>
+          <% else %>
+            <div class="py-5 text-muted">No hay datos de estados</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white fw-bold py-3"><i class="bi bi-bar-chart me-2 text-info"></i>Tickets por Prioridad</div>
+        <div class="card-body">
+          <% if @tickets_por_prioridad.any? %>
+            <%= column_chart @tickets_por_prioridad, colors: ["#dc3545", "#fd7e14", "#0dcaf0"], adapter: "google" %>
+          <% else %>
+            <div class="py-5 text-muted text-center">No hay datos de prioridad</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Segunda Fila: Categorías y Leaderboard %>
+  <div class="row mb-4">
+    <div class="col-md-7 mb-4 mb-md-0">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white py-3">
+          <h6 class="mb-0 fw-bold"><i class="bi bi-tags-fill me-2 text-secondary"></i>Distribución por Categorías</h6>
+        </div>
+        <div class="card-body">
+          <% if @categories_report.any? %>
+            <%= pie_chart @categories_report, donut: true, legend: "bottom", adapter: "google" %>
+          <% else %>
+            <div class="py-5 text-muted text-center">No hay tickets categorizados</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-white py-3">
+          <h6 class="mb-0 fw-bold"><i class="bi bi-trophy-fill me-2 text-warning"></i>Top Resolutores</h6>
+        </div>
+        <div class="card-body">
+          <% leaderboard_data = @leaderboard.map { |u| [u.name, u.assigned_tickets.where(status: [:resolved, :closed]).count] } %>
+          <% if leaderboard_data.any? %>
+            <%= bar_chart leaderboard_data, colors: ["#198754"], xtitle: "Tickets resueltos", adapter: "google" %>
+          <% else %>
+            <div class="py-5 text-muted text-center">Sin resoluciones aún</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# Tercera Fila: Tabla de Tickets Recientes %>
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white d-flex align-items-center py-3">
+          <i class="bi bi-list-task me-2"></i>
+          <h5 class="mb-0">Tickets Recientes</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-4 py-3">Título</th>
+                  <th>Usuario</th>
+                  <th>Categoría</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th class="pe-4 text-end">Asignado a</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_tickets.each do |ticket| %>
+                  <tr>
+                    <td class="ps-4 py-3">
+                      <%= link_to ticket.title, ticket_path(ticket), class: "text-decoration-none fw-bold text-primary" %>
+                    </td>
+                    <td><%= ticket.user.name %></td>
+                    <td><small class="text-muted"><i class="bi bi-tag me-1"></i><%= ticket.category.name %></small></td>
+                    <td>
+                      <span class="<%= priority_badge_class(ticket.priority) %>">
+                        <%= ticket.priority.humanize %>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge rounded-pill <%= status_badge_class(ticket.status) %>">
+                        <%= ticket.status.humanize %>
+                      </span>
+                    </td>
+                    <td class="pe-4 text-end">
+                      <span class="small fw-bold text-secondary"><%= ticket.assignee&.name || "Sin asignar" %></span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<%# Al final de dashboard/index.html.erb %>
+<script type="text/javascript">
+  document.addEventListener("turbo:load", function() {
+    if (window.Chartkick) {
+      Chartkick.eachChart(function(chart) {
+        chart.redraw();
+      });
+    }
+  });
+</script>

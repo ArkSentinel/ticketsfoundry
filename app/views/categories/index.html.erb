@@ -1,0 +1,78 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-primary">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-tag-fill me-2"></i>
+            <%= @category.new_record? ? "Nueva Categoría" : "Editar Categoría" %>
+          </h5>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: @category, local: true) do |f| %>
+            <div class="mb-3">
+              <%= f.label :name, "Nombre de la categoría", class: "form-label fw-bold" %>
+              <%= f.text_field :name, class: "form-control", placeholder: "Ej. Hardware, Redes...", required: true %>
+            </div>
+            <div class="d-grid gap-2">
+              <%= f.submit @category.new_record? ? "Guardar Categoría" : "Actualizar Categoría", class: "btn btn-primary" %>
+              <% unless @category.new_record? %>
+                <%= link_to "Cancelar", categories_path, class: "btn btn-light btn-sm" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0"><i class="bi bi-tags me-2"></i>Categorías Existentes</h5>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Nombre</th>
+                <th class="text-center">Tickets asociados</th>
+                <th class="text-end pe-3">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @categories.each do |category| %>
+                <tr class="<%= 'table-primary' if category == @category %>">
+                  <td class="fw-bold ps-3"><%= category.name %></td>
+                  <td class="text-center">
+                    <span class="badge bg-secondary rounded-pill"><%= category.tickets.count %></span>
+                  </td>
+                  <td class="text-end pe-3">
+                    <div class="btn-group">
+                      <%# BOTÓN EDITAR %>
+                      <%= link_to edit_category_path(category), class: "btn btn-outline-primary btn-sm" do %>
+                        <i class="bi bi-pencil"></i>
+                      <% end %>
+
+                      <%# BOTÓN ELIMINAR %>
+                      <% if category.tickets.none? %>
+                        <%= button_to category_path(category), method: :delete, 
+                            data: { confirm: "¿Estás seguro de eliminar '#{category.name}'?" }, 
+                            class: "btn btn-outline-danger btn-sm" do %>
+                          <i class="bi bi-trash"></i>
+                        <% end %>
+                      <% else %>
+                        <button class="btn btn-outline-secondary btn-sm" disabled title="En uso">
+                          <i class="bi bi-lock"></i>
+                        </button>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

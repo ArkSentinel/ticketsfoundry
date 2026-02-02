@@ -1,0 +1,52 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow border-0">
+        <div class="card-header bg-primary text-white p-3 text-center">
+          <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Usuario</h5>
+        </div>
+        <div class="card-body p-4">
+          <%= form_with(model: @user, local: true) do |f| %>
+            <div class="mb-3">
+              <%= f.label :name, "Nombre Completo", class: "form-label fw-bold" %>
+              <%= f.text_field :name, class: "form-control" %>
+            </div>
+            
+            <div class="mb-3">
+                <%= f.label :email, "Correo Electrónico", class: "form-label fw-bold" %>
+                <%= f.email_field :email, class: "form-control", placeholder: "correo@empresa.com" %>
+                <div class="form-text text-muted small">
+                    Ten cuidado: cambiar el correo afectará el inicio de sesión del usuario.
+                </div>
+            </div>
+            
+            <div class="mb-3">
+              <%= f.label :role, "Rol del Sistema", class: "form-label fw-bold" %>
+              <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, { class: "form-select" } %>
+            </div>
+
+            <div class="alert alert-info small py-2">
+              <i class="bi bi-info-circle me-1"></i> Deja la contraseña en blanco si no deseas cambiarla.
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <%= f.label :password, "Nueva Contraseña", class: "form-label fw-bold" %>
+                <%= f.password_field :password, class: "form-control" %>
+              </div>
+              <div class="col-md-6 mb-3">
+                <%= f.label :password_confirmation, "Confirmar", class: "form-label fw-bold" %>
+                <%= f.password_field :password_confirmation, class: "form-control" %>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+              <%= f.submit "Actualizar Datos", class: "btn btn-primary" %>
+              <%= link_to "Volver", users_path, class: "btn btn-light" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

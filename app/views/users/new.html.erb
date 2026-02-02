@@ -1,0 +1,52 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card shadow border-0">
+        <div class="card-header bg-dark text-white p-3">
+          <h5 class="mb-0 text-center"><i class="bi bi-person-plus-fill me-2"></i>Registrar Nuevo Usuario</h5>
+        </div>
+        <div class="card-body p-4">
+          <%= form_with(model: @user, local: true) do |f| %>
+            
+            <div class="mb-3">
+              <%= f.label :name, "Nombre Completo", class: "form-label fw-bold" %>
+              <%= f.text_field :name, class: "form-control", placeholder: "Ej. Juan Pérez", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :email, "Correo Electrónico", class: "form-label fw-bold" %>
+              <%= f.email_field :email, class: "form-control", placeholder: "juan@empresa.com", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :role, "Rol del Sistema", class: "form-label fw-bold" %>
+              <%= f.select :role, User.roles.keys.map { |r| [r.humanize, r] }, {}, { class: "form-select" } %>
+              <div class="form-text text-muted small mt-1">
+                Los agentes pueden resolver tickets, los clientes solo pueden reportarlos.
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <%= f.label :password, "Contraseña", class: "form-label fw-bold" %>
+                <%= f.password_field :password, class: "form-control", required: true %>
+              </div>
+              <div class="col-md-6 mb-3">
+                <%= f.label :password_confirmation, "Confirmar", class: "form-label fw-bold" %>
+                <%= f.password_field :password_confirmation, class: "form-control", required: true %>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="d-grid gap-2 mt-4">
+              <%= f.submit "Crear Cuenta", class: "btn btn-dark btn-lg" %>
+              <%= link_to "Cancelar", users_path, class: "btn btn-light" %>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
